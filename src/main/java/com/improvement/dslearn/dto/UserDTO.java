@@ -1,8 +1,10 @@
 package com.improvement.dslearn.dto;
 
+import com.improvement.dslearn.entities.Role;
 import com.improvement.dslearn.entities.User;
 
-import java.util.Optional;
+import java.util.HashSet;
+import java.util.Set;
 
 public class UserDTO {
 
@@ -11,6 +13,8 @@ public class UserDTO {
 
     private String name;
     private String email;
+
+    private Set<RoleDTO> roles = new HashSet<>();
 
     public UserDTO() {
     }
@@ -25,6 +29,7 @@ public class UserDTO {
         this.id = entity.getId();
         this.name = entity.getName();
         this.email = entity.getEmail();
+        entity.getRoles().forEach(role -> this.roles.add(new RoleDTO(role)));
     }
 
 
@@ -50,5 +55,13 @@ public class UserDTO {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Set<RoleDTO> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<RoleDTO> roles) {
+        this.roles = roles;
     }
 }

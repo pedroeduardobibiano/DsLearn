@@ -1,6 +1,7 @@
 package com.improvement.dslearn.resources;
 
 import com.improvement.dslearn.dto.UserDTO;
+import com.improvement.dslearn.dto.UserInsertDTO;
 import com.improvement.dslearn.servicies.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,8 +32,8 @@ public class UserResource {
     }
 
     @PostMapping
-    public ResponseEntity<UserDTO> insert(@RequestBody UserDTO userDTO) {
-        UserDTO userDto = userService.insert(userDTO);
+    public ResponseEntity<UserDTO> insert(@RequestBody UserInsertDTO insertDTO) {
+        UserDTO userDto = userService.insert(insertDTO);
         return new ResponseEntity<>(userDto, HttpStatus.CREATED);
     }
 

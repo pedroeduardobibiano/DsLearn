@@ -73,9 +73,6 @@ public class User {
         return roles;
     }
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
 
     @Override
     public boolean equals(Object o) {

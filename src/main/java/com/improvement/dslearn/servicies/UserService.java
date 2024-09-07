@@ -1,24 +1,32 @@
 package com.improvement.dslearn.servicies;
 
+import com.improvement.dslearn.dto.RoleDTO;
 import com.improvement.dslearn.dto.UserDTO;
+import com.improvement.dslearn.dto.UserInsertDTO;
+import com.improvement.dslearn.entities.Role;
+import com.improvement.dslearn.entities.RoleRepository;
 import com.improvement.dslearn.entities.User;
 import com.improvement.dslearn.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService {
 
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional(readOnly = true)
@@ -35,18 +43,32 @@ public class UserService {
     }
 
     @Transactional
-    public UserDTO insert(UserDTO userDTO) {
-        User user = new User();
-        user.setName(userDTO.getName());
-        user.setEmail(userDTO.getEmail());
-        userRepository.save(user);
-        return new UserDTO(user);
+    public UserDTO insert(UserInsertDTO insertDTO) {
+        User entity = new User();
+        structuringUser(entity, insertDTO);
+        entity.setPassword(passwordEncoder.encode(insertDTO.getPassword()));
+        userRepository.save(entity);
+        return new UserDTO(entity);
     }
 
 
     public User getId(long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("id not found: " + id));
+    }
+
+    @Transactional
+    public void structuringUser(User entity, UserDTO userDTO) {
+        entity.setName(userDTO.getName());
+        entity.setEmail(userDTO.getEmail());
+
+        entity.getRoles().clear();
+
+        for (RoleDTO roleDto : userDTO.getRoles()) {
+            Role role = roleRepository.getReferenceById(roleDto.getId());
+            entity.getRoles().add(role);
+        }
+
     }
 
 }
