@@ -4,7 +4,7 @@ import com.improvement.dslearn.dto.RoleDTO;
 import com.improvement.dslearn.dto.UserDTO;
 import com.improvement.dslearn.dto.UserInsertDTO;
 import com.improvement.dslearn.entities.Role;
-import com.improvement.dslearn.entities.RoleRepository;
+import com.improvement.dslearn.repositories.RoleRepository;
 import com.improvement.dslearn.entities.User;
 import com.improvement.dslearn.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -12,7 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
