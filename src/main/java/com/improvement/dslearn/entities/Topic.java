@@ -3,9 +3,7 @@ package com.improvement.dslearn.entities;
 import jakarta.persistence.*;
 
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "tb_topic")
@@ -22,6 +20,7 @@ public class Topic {
 
     @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
     private Instant moment;
+
 
     @ManyToOne
     @JoinColumn(name = "author_id")
@@ -41,10 +40,17 @@ public class Topic {
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<User> likes = new HashSet<User>();
 
+    @ManyToOne
+    @JoinColumn(name = "reply_id")
+    private Reply answer;
+
+    @OneToMany(mappedBy = "topic")
+    private List<Reply> replies = new ArrayList<>();
+
     public Topic() {
     }
 
-    public Topic(Long id, String title, String body, Instant moment, User author, Offer offer, Lesson lesson) {
+    public Topic(Long id, String title, String body, Instant moment, User author, Offer offer, Lesson lesson, Reply answer) {
         this.id = id;
         this.title = title;
         this.body = body;
@@ -52,6 +58,7 @@ public class Topic {
         this.author = author;
         this.offer = offer;
         this.lesson = lesson;
+        this.answer = answer;
     }
 
     public Long getId() {
@@ -112,6 +119,18 @@ public class Topic {
 
     public Set<User> getLikes() {
         return likes;
+    }
+
+    public Reply getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(Reply answer) {
+        this.answer = answer;
+    }
+
+    public List<Reply> getReplies() {
+        return replies;
     }
 
     @Override
