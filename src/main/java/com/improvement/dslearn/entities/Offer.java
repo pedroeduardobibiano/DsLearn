@@ -28,6 +28,9 @@ public class Offer {
     @JoinColumn(name = "course_id")
     private Course course;
 
+    @OneToMany(mappedBy = "offer")
+    private List<Topic> topics = new ArrayList<>();
+
     public Offer() {
     }
 
@@ -81,6 +84,10 @@ public class Offer {
 
     public List<Resource> getResources() {
         return resources;
+    }
+
+    public List<Topic> getTopics() {
+        return topics;
     }
 
 
