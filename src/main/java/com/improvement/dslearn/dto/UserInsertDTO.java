@@ -1,8 +1,5 @@
 package com.improvement.dslearn.dto;
 
-import com.improvement.dslearn.entities.User;
-
-
 public class UserInsertDTO extends UserDTO {
 
     private String password;

@@ -61,7 +61,4 @@ public class UserDTO {
         return roles;
     }
 
-    public void setRoles(Set<RoleDTO> roles) {
-        this.roles = roles;
-    }
 }
