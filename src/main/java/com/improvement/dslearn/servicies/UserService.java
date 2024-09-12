@@ -1,72 +1,52 @@
 package com.improvement.dslearn.servicies;
 
-import com.improvement.dslearn.dto.RoleDTO;
 import com.improvement.dslearn.dto.UserDTO;
-import com.improvement.dslearn.dto.UserInsertDTO;
-import com.improvement.dslearn.entities.Role;
 import com.improvement.dslearn.entities.User;
 import com.improvement.dslearn.repositories.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.Optional;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
-    @Transactional(readOnly = true)
-    public List<UserDTO> findAll() {
-        List<User> users = userRepository.findAll();
-        return users.stream().map(UserDTO::new).toList();
-    }
-
-
-    @Transactional(readOnly = true)
+    @Transactional
     public UserDTO findById(Long id) {
         User user = getId(id);
         return new UserDTO(user);
     }
 
-    @Transactional
-    public UserDTO insert(UserInsertDTO insertDTO) {
-        User entity = new User();
-        structuringUser(entity, insertDTO);
-        entity.setPassword(passwordEncoder.encode(insertDTO.getPassword()));
-        userRepository.save(entity);
-        return new UserDTO(entity);
-    }
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
+        Optional<User> byEmail = userRepository.findByEmail(username);
+        if (byEmail.isEmpty()) {
+            logger.error("User not found{}", username);
+            throw new UsernameNotFoundException("Email not found");
+        }
+        logger.info("User found {}", username);
+        return byEmail.get();
+    }
 
     public User getId(long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("id not found: " + id));
+        Optional<User> user = userRepository.findById(id);
+        return user.orElseThrow(() -> new RuntimeException("aaa"));
     }
 
-    @Transactional
-    public void structuringUser(User entity, UserDTO userDTO) {
-        entity.setName(userDTO.getName());
-        entity.setEmail(userDTO.getEmail());
-
-        entity.getRoles().clear();
-
-        for (RoleDTO roleDto : userDTO.getRoles()) {
-            Role role = roleRepository.getReferenceById(roleDto.getId());
-            entity.getRoles().add(role);
-        }
-
-    }
 
 }
