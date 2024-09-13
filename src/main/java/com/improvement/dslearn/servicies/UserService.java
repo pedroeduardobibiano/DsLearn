@@ -1,7 +1,6 @@
 package com.improvement.dslearn.servicies;
 
 import com.improvement.dslearn.dto.UserDTO;
-import com.improvement.dslearn.dto.UserLoggedDTO;
 import com.improvement.dslearn.entities.User;
 import com.improvement.dslearn.repositories.UserRepository;
 import org.slf4j.Logger;
@@ -48,12 +47,10 @@ public class UserService implements UserDetailsService {
         return byEmail.get();
     }
 
-
     public User getId(long id) {
         Optional<User> user = userRepository.findById(id);
-        return user.orElseThrow(() -> new RuntimeException("User not found"));
+        return user.orElseThrow(() -> new RuntimeException("aaa"));
     }
-
 
 
 }
