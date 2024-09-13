@@ -1,7 +1,9 @@
 package com.improvement.dslearn.resources.exceptions;
 
 import com.improvement.dslearn.servicies.exceptions.DatabaseException;
+import com.improvement.dslearn.servicies.exceptions.ForbiddenException;
 import com.improvement.dslearn.servicies.exceptions.ResourceNotFoundException;
+import com.improvement.dslearn.servicies.exceptions.UnauthorizedException;
 import jakarta.persistence.EntityExistsException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -54,8 +56,25 @@ public class ResourceExceptionHandler {
             assert f != null;
             err.addError(f.getField(), f.getDefaultMessage());
         }
-
         return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler({UnauthorizedException.class})
+    public ResponseEntity<OauthCustomError> handleUnauthorized(UnauthorizedException e, HttpServletRequest request) {
+        System.out.println("UnauthorizedException caught!");
+        OauthCustomError err = new OauthCustomError();
+        err.setError("Unauthorized");
+        err.setErrorDescription(e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(err);
+    }
+
+
+    @ExceptionHandler({ForbiddenException.class})
+    public ResponseEntity<OauthCustomError> Forbidden(ForbiddenException e, HttpServletRequest request) {
+        OauthCustomError err = new OauthCustomError();
+        err.setError("Forbiden");
+        err.setError(e.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(err);
     }
 
 
